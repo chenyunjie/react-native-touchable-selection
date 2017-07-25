@@ -1,0 +1,22 @@
+{
+  "name": "react-native-selection",
+  "version": "1.0.0",
+  "description": "组合按钮选择器，支持单选及多选",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chenyunjie/react-native-selection.git"
+  },
+  "keywords": [
+    "选择器"
+  ],
+  "author": "陈云杰",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/chenyunjie/react-native-selection/issues"
+  },
+  "homepage": "https://github.com/chenyunjie/react-native-selection#readme"
+}
