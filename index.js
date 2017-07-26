@@ -251,23 +251,26 @@ export default class Select extends PureComponent {
 
     set selectedItems(items) {
         let stateArray = this.props.dataSource.map(() => {return false});
+        
+	    if (items && items.length) {
 
-        this.props.dataSource.map((o, i) => {
-            if (this.props.labelField) {
-                items.map((choosed) => {
-                    if(choosed[this.props.labelField] == o[this.props.labelField]) {
-                        stateArray[i] = true;
-                    }
-                });
-            } else {
-                items.map((c) => {
-                    if (c == o) {
-                        stateArray[i] = true;
-                    }
-                });
+            this.props.dataSource.map((o, i) => {
+                if (this.props.labelField) {
+                    items.map((choosed) => {
+                        if(choosed[this.props.labelField] == o[this.props.labelField]) {
+                            stateArray[i] = true;
+                        }
+                    });
+                } else {
+                    items.map((c) => {
+                        if (c == o) {
+                            stateArray[i] = true;
+                        }
+                    });
 
-            }
-        });
+                }  
+            });
+        }
 
         this.setState({
             stateArray : stateArray
