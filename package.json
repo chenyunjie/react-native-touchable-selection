@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/chenyunjie/react-native-selection.git"
+    "url": "git+https://github.com/chenyunjie/react-native-touchable-selection.git"
   },
   "keywords": [
     "选择器"
@@ -16,7 +16,7 @@
   "author": "陈云杰",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/chenyunjie/react-native-selection/issues"
+    "url": "https://github.com/chenyunjie/react-native-touchable-selection/issues"
   },
-  "homepage": "https://github.com/chenyunjie/react-native-selection#readme"
+  "homepage": "https://github.com/chenyunjie/react-native-touchable-selection#readme"
 }
