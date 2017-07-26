@@ -1,5 +1,5 @@
 {
-  "name": "react-native-selection",
+  "name": "react-native-button-selection",
   "version": "1.0.0",
   "description": "组合按钮选择器，支持单选及多选",
   "main": "index.js",
