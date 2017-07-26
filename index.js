@@ -84,8 +84,9 @@ export default class Select extends PureComponent {
         this.setState({
             dataSource: nextProps.dataSource
         });
-        if (nextProps.dataSource.length > 0 && nextProps.dataSource !== this.state.dataSource) {
-            this.markSelectedItems(nextProps);
+        if (nextProps.dataSource.length > 0) {
+            let stateObject = this.markSelectedItems(nextProps);
+            this.setState(stateObject);
         }
     }
 
