@@ -1,2 +1,2 @@
-![](https://github.com/chenyunjie/react-native-selection/blob/master/selection.gif)
+![](https://raw.githubusercontent.com/chenyunjie/react-native-button-selection/master/selection.gif)
 
