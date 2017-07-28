@@ -5,7 +5,7 @@
  */
 
 import React, {
-    Component, PureComponent
+    Component
 } from 'react';
 
 import {
@@ -38,7 +38,7 @@ const defaultVGap = 10;
  * 属性:
  *      selectedItems   已经选择的数量
  */
-export default class Select extends PureComponent {
+export default class Select extends Component {
 
     constructor(props) {
         super(props);
@@ -204,10 +204,16 @@ export default class Select extends PureComponent {
 
     _press(option, index) {
 
-        if (this.props.selectable == false) {
+        if (this.selectable === undefined) {
+            this.selectable = this.props.selectable;
+        }
+
+        if (this.selectable === false) {
             if (!this.selectedItems || this.selectedItems.length === 0) {
                 if (this.props.selectableOnEmpty === false) {
                     return;
+                } else {
+                    this.selectable = true;
                 }
             } else {
                 return;

@@ -1,6 +1,6 @@
 {
   "name": "react-native-touchable-selection",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "description": "组合按钮选择器，支持单选及多选",
   "main": "index.js",
   "scripts": {
