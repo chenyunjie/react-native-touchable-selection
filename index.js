@@ -84,7 +84,7 @@ export default class Select extends Component {
         this.setState({
             dataSource: nextProps.dataSource
         });
-        if (nextProps.dataSource.length > 0) {
+        if (nextProps.dataSource.length > 0 && nextProps.selectedOption !== undefined) {
             let stateObject = this.markSelectedItems(nextProps);
             this.setState(stateObject);
         }
@@ -117,12 +117,21 @@ export default class Select extends Component {
 
         let marginRight = defaultMinMargin;
 
+        let selected = this.state.stateArray[index];
+
+        let isOptionEnable = true;
+        if (this.props.isOptionEnable) {
+            isOptionEnable = this.props.isOptionEnable(option);
+        }
+        if (isOptionEnable !== true || isOptionEnable !== false) {
+            isOptionEnable = true;
+        }
         return (
             <TouchableOpacity
                 key={index}
                 activeOpacity={1}
                 onPress={() => this._press(option, index)} style={{marginRight: marginRight, height: this.props.optionHeight + 10}}>
-                {renderFunction(option, index)}
+                {renderFunction(option, index, !!selected, isOptionEnable)}
             </TouchableOpacity>
         )
 
@@ -204,6 +213,11 @@ export default class Select extends Component {
 
     _press(option, index) {
 
+        //不可点击时直接返回
+        if (this.props.isOptionEnable && this.props.isOptionEnable(option) === false) {
+            return;
+        }
+
         if (this.selectable === undefined) {
             this.selectable = this.props.selectable;
         }
@@ -259,7 +273,7 @@ export default class Select extends Component {
     set selectedItems(items) {
         let stateArray = this.props.dataSource.map(() => {return false});
         
-	    if (items && items.length) {
+        if (items && items.length) {
 
             this.props.dataSource.map((o, i) => {
                 if (this.props.labelField) {
