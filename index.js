@@ -23,6 +23,7 @@ const defaultVGap = 10;
 /**
  *
  * <Select
+ *          isOptionEnable={(option)=>true|false}
  *          selectedIndex={0}                                   可选                    默认选中索引
  *          selectedOption={option值}                           可选                    默认选择项(优先索引)
  *          renderOption={this.renderOption}                    可选                    自定义渲染函数
@@ -32,11 +33,13 @@ const defaultVGap = 10;
  *          optionHeight={0}                                    可选-默认0代表自适应      选项高度
  *          optionRadius={0}                                    可选-默认0代表没有圆角    圆角值
  *          labelField="text"                                   可选                    文本显示的field,不填写则为字符串数组
- *          optionStateChange={this.onSelected}(option,index, selected)   可选                    选择回调
+ *          optionStateChange={this.onSelected}(option,index, selected, select:当前对象)   可选                    选择回调
  *          />
  *
  * 属性:
  *      selectedItems   已经选择的数量
+ * 
+ * 方法：clearSelectedOptionOfDisabled() 清理不可点击状态的选中状态,会调用isOptionEnable
  */
 export default class Select extends Component {
 
@@ -58,17 +61,14 @@ export default class Select extends Component {
             type = 'checkbox';
         }
 
-        //默认选择项
-        let stateObject = this.markSelectedItems(this.props);
-
-        this.state = assign({
+        this.state = {
             dataSource: this.props.dataSource || [],
             optionWidth: optionWidth,
             optionHeight: optionHeight,
             type: type,
-        }, stateObject);
-
-
+            stateArray:[],
+            lastSelectedIndex: -1
+        };
 
         this._defaultOption = this._defaultOption.bind(this);
         this._defaultRenderOption = this._defaultRenderOption.bind(this);
@@ -88,6 +88,12 @@ export default class Select extends Component {
             let stateObject = this.markSelectedItems(nextProps);
             this.setState(stateObject);
         }
+    }
+
+    componentDidMount() {
+        //默认选择项
+        let stateObject = this.markSelectedItems(this.props);
+        this.setState(stateObject);
     }
 
     render() {
@@ -112,6 +118,39 @@ export default class Select extends Component {
 
     }
 
+    /**
+     * 清理不可点击的选项的选中状态
+     */
+    clearSelectedOptionOfDisabled() {
+        if (!this.props.dataSource || this.props.dataSource.length === 0) {
+            return;
+        }
+        let stateArray = this.state.stateArray;
+        let updated = false;
+        this.props.dataSource.map((option, index) => {
+            let isOptionEnable = true;
+            if (this.props.isOptionEnable) {
+                isOptionEnable = this.props.isOptionEnable(option);
+            }
+            if (isOptionEnable !== true || isOptionEnable !== false) {
+                isOptionEnable = true;
+            }
+
+            if (isOptionEnable === false) {
+                updated = true;
+                stateArray[index] = false;
+            }
+        });
+
+        //发生变化更新ui
+        if (updated === true) {
+            
+            this.setState({stateArray: stateArray});
+        }
+    }
+
+    
+
     _defaultOption(option, index) {
         let renderFunction = !this.props.renderOption ? this._defaultRenderOption : this.props.renderOption;
 
@@ -126,6 +165,7 @@ export default class Select extends Component {
         if (isOptionEnable !== true || isOptionEnable !== false) {
             isOptionEnable = true;
         }
+        
         return (
             <TouchableOpacity
                 key={index}
@@ -170,9 +210,7 @@ export default class Select extends Component {
         let stateArray = this.props.dataSource.map(() => {return false});
         if (nextProps.selectedIndex || (nextProps.selectedIndex > 0 && nextProps.selectedIndex < nextProps.dataSource.length)) {
             stateArray[nextProps.selectedIndex] = true;
-            if (nextProps.optionStateChange) {
-                nextProps.optionStateChange(nextProps.dataSource[nextProps.selectedIndex], nextProps.selectedIndex, true);
-            }
+            
             return {stateArray: stateArray, lastSelectedIndex: nextProps.selectedIndex};
         } else {
             //默认选择项
@@ -201,12 +239,10 @@ export default class Select extends Component {
                     });
                 });
 
-                if (nextProps.optionStateChange && index > 0) {
-                    nextProps.optionStateChange(nextProps.dataSource[index], index, true);
-                }
+                
                 return {stateArray: stateArray, lastSelectedIndex: index};
             }
-
+            
             return {stateArray: stateArray, lastSelectedIndex: -1};
         }
     }
@@ -234,17 +270,23 @@ export default class Select extends Component {
             }
         }
 
+        let stateArray = this.state.stateArray;
         if (this.props.type == 'radio') {
-            let stateArray = this.state.stateArray;
-            stateArray[this.state.lastSelectedIndex] = false;
-            stateArray[index] = true;
-            this.setState({lastSelectedIndex: index});
 
-            if (this.props.optionStateChange) {
-                this.props.optionStateChange(option, index, stateArray[index]);
+            //如果没变就不动
+            if (this.state.lastSelectedIndex !== index) {
+                
+                stateArray[this.state.lastSelectedIndex] = false;
+                stateArray[index] = true;
+
+                this.setState({lastSelectedIndex: index, stateArray: stateArray});
+    
+                if (this.props.optionStateChange) {
+                    this.props.optionStateChange(option, index, stateArray[index]);
+                }
             }
+            
         } else {
-            let stateArray = this.state.stateArray;
 
             stateArray[index] = !stateArray[index];
 
@@ -293,10 +335,12 @@ export default class Select extends Component {
             });
         }
 
+        
         this.setState({
             stateArray : stateArray
         });
     }
+
 }
 
 const styles = StyleSheet.create({
