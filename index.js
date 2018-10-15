@@ -9,7 +9,7 @@ import React, {
 } from 'react';
 
 import {
-    View, TouchableOpacity, PixelRatio, StyleSheet,Text
+    View, TouchableOpacity, PixelRatio, StyleSheet, Text
 } from 'react-native';
 
 import assign from 'object-assign';
@@ -66,7 +66,7 @@ export default class Select extends Component {
             optionWidth: optionWidth,
             optionHeight: optionHeight,
             type: type,
-            stateArray:[],
+            stateArray: [],
             lastSelectedIndex: -1
         };
 
@@ -144,12 +144,12 @@ export default class Select extends Component {
 
         //发生变化更新ui
         if (updated === true) {
-            
-            this.setState({stateArray: stateArray});
+
+            this.setState({ stateArray: stateArray });
         }
     }
 
-    
+
 
     _defaultOption(option, index) {
         let renderFunction = !this.props.renderOption ? this._defaultRenderOption : this.props.renderOption;
@@ -162,15 +162,15 @@ export default class Select extends Component {
         if (this.props.isOptionEnable) {
             isOptionEnable = this.props.isOptionEnable(option);
         }
-        if (isOptionEnable !== true || isOptionEnable !== false) {
+        if (isOptionEnable !== true && isOptionEnable !== false) {
             isOptionEnable = true;
         }
-        
+
         return (
             <TouchableOpacity
                 key={index}
                 activeOpacity={1}
-                onPress={() => this._press(option, index)} style={{marginRight: marginRight, height: this.props.optionHeight + 10}}>
+                onPress={() => this._press(option, index)} style={{ marginRight: marginRight, height: this.props.optionHeight + 10 }}>
                 {renderFunction(option, index, !!selected, isOptionEnable)}
             </TouchableOpacity>
         )
@@ -179,21 +179,21 @@ export default class Select extends Component {
 
     _defaultRenderOption(option, index) {
         let displayValue = option;
-        if (typeof(option) != 'string') {
+        if (typeof (option) != 'string') {
             displayValue = option[this.props.labelField];
         }
 
-        let widthStyle = this.state.optionWidth == 0?{}:{width:this.state.optionWidth}; //如果没有设置宽度或宽度为0，则代表自适应宽度
-        let heightStyle = this.state.optionHeight == 0?{}:{height:this.state.optionHeight};//如果没有设置高度或高度为0，则代表自适应高度
-        let borderStyle = {borderRadius: this.props.optionRadius || 0};
+        let widthStyle = this.state.optionWidth == 0 ? {} : { width: this.state.optionWidth }; //如果没有设置宽度或宽度为0，则代表自适应宽度
+        let heightStyle = this.state.optionHeight == 0 ? {} : { height: this.state.optionHeight };//如果没有设置高度或高度为0，则代表自适应高度
+        let borderStyle = { borderRadius: this.props.optionRadius || 0 };
         return (
             <View style={[
                 this.state.stateArray[index] ?
-                    styles.optionSelected:
+                    styles.optionSelected :
                     styles.optionUnSelected,
-                    widthStyle,
-                    heightStyle,
-                    borderStyle,
+                widthStyle,
+                heightStyle,
+                borderStyle,
             ]}>
                 <Text
                     style={
@@ -207,11 +207,11 @@ export default class Select extends Component {
     }
 
     markSelectedItems(nextProps) {
-        let stateArray = this.props.dataSource.map(() => {return false});
+        let stateArray = this.props.dataSource.map(() => { return false });
         if (nextProps.selectedIndex || (nextProps.selectedIndex > 0 && nextProps.selectedIndex < nextProps.dataSource.length)) {
             stateArray[nextProps.selectedIndex] = true;
-            
-            return {stateArray: stateArray, lastSelectedIndex: nextProps.selectedIndex};
+
+            return { stateArray: stateArray, lastSelectedIndex: nextProps.selectedIndex };
         } else {
             //默认选择项
             if (nextProps.selectedOption) {
@@ -226,7 +226,7 @@ export default class Select extends Component {
 
                     markSelectedItems.map((markedOptionItem) => {
                         if (nextProps.labelField) {
-                            if(markedOptionItem[nextProps.labelField] == o[nextProps.labelField]) {
+                            if (markedOptionItem[nextProps.labelField] == o[nextProps.labelField]) {
                                 stateArray[i] = true;
                                 index = i;
                             }
@@ -239,11 +239,11 @@ export default class Select extends Component {
                     });
                 });
 
-                
-                return {stateArray: stateArray, lastSelectedIndex: index};
+
+                return { stateArray: stateArray, lastSelectedIndex: index };
             }
-            
-            return {stateArray: stateArray, lastSelectedIndex: -1};
+
+            return { stateArray: stateArray, lastSelectedIndex: -1 };
         }
     }
 
@@ -275,17 +275,21 @@ export default class Select extends Component {
 
             //如果没变就不动
             if (this.state.lastSelectedIndex !== index) {
-                
+
                 stateArray[this.state.lastSelectedIndex] = false;
                 stateArray[index] = true;
 
-                this.setState({lastSelectedIndex: index, stateArray: stateArray});
-    
+                this.setState({ lastSelectedIndex: index, stateArray: stateArray });
+
                 if (this.props.optionStateChange) {
                     this.props.optionStateChange(option, index, stateArray[index]);
                 }
+            } else {
+                if (this.props.optionStateChange) {
+                    this.props.optionStateChange(option, index, true);
+                }
             }
-            
+
         } else {
 
             stateArray[index] = !stateArray[index];
@@ -304,7 +308,7 @@ export default class Select extends Component {
 
     get selectedItems() {
         let items = [];
-        this.state.stateArray.map((o,i) => {
+        this.state.stateArray.map((o, i) => {
             if (o) {
                 items.push(this.state.dataSource[i]);
             }
@@ -313,14 +317,14 @@ export default class Select extends Component {
     }
 
     set selectedItems(items) {
-        let stateArray = this.props.dataSource.map(() => {return false});
-        
+        let stateArray = this.props.dataSource.map(() => { return false });
+
         if (items && items.length) {
 
             this.props.dataSource.map((o, i) => {
                 if (this.props.labelField) {
                     items.map((choosed) => {
-                        if(choosed[this.props.labelField] == o[this.props.labelField]) {
+                        if (choosed[this.props.labelField] == o[this.props.labelField]) {
                             stateArray[i] = true;
                         }
                     });
@@ -331,13 +335,13 @@ export default class Select extends Component {
                         }
                     });
 
-                }  
+                }
             });
         }
 
-        
+
         this.setState({
-            stateArray : stateArray
+            stateArray: stateArray
         });
     }
 
@@ -352,7 +356,7 @@ const styles = StyleSheet.create({
         borderColor: '#dcdcdc',
         borderWidth: 1,
         backgroundColor: 'transparent',
-        borderRadius:5,
+        borderRadius: 5,
         alignItems: 'center',
         justifyContent: 'center',
         paddingTop: 3,
@@ -363,7 +367,7 @@ const styles = StyleSheet.create({
         borderColor: '#00b4ff',
         borderWidth: 1,
         backgroundColor: 'transparent',
-        borderRadius:5,
+        borderRadius: 5,
         alignItems: 'center',
         justifyContent: 'center',
         paddingTop: 3,
@@ -371,7 +375,7 @@ const styles = StyleSheet.create({
         marginTop: defaultVGap
     },
     optionTextSelected: {
-        marginHorizontal:15,
+        marginHorizontal: 15,
         color: '#00b4ff',
         fontSize: 12,
         alignItems: 'center',
@@ -379,7 +383,7 @@ const styles = StyleSheet.create({
         textAlign: 'center'
     },
     optionTextUnSelected: {
-        marginHorizontal:15,
+        marginHorizontal: 15,
         color: '#999999',
         fontSize: 12,
         alignItems: 'center',
